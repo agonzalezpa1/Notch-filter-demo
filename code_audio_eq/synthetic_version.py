@@ -1,3 +1,4 @@
+# 1 --- Importing libraries ---
 import time
 import numpy as np
 import soundfile as sf
@@ -6,13 +7,13 @@ import matplotlib.pyplot as plt
 from scipy import signal
 from scipy.fft import fft, fftfreq
 
-# --- Parameters ---
+# 2 --- Parameters ---
 duration = 3.0  # In seconds
 samplerate = 44100 # Orginally 44100 Hz
 f0 = 1000.0  # Frequency to remove (500 or 1000 or 3000)
 Q = 30.0    # Quality factor (originally 30)
 
-# --- Generate synthetic signal ---
+# 3 --- Generate synthetic signal ---
 t = np.linspace(0, duration, int(samplerate * duration), endpoint=False)
 signal_orig = (
     0.5 * np.sin(2 * np.pi * 500 * t) +
@@ -21,18 +22,18 @@ signal_orig = (
 )
 signal_orig /= np.max(np.abs(signal_orig))  # Normalize
 
-# --- Design and apply notch filter ---
+# 4 --- Design and apply notch filter ---
 b, a = signal.iirnotch(f0, Q, fs=samplerate)
 signal_filtered = signal.lfilter(b, a, signal_orig)
 
-# --- Save the created audios ---
+# 5 --- Save the created audios ---
 sf.write("synthetic_original.wav", signal_orig, samplerate)
 sf.write("synthetic_filtered.wav", signal_filtered, samplerate)
 
 # Select hardware output speaker from the computer
 sd.default.device = (None, 3)  # (input_device, output_device)
 
-# --- Playback ---
+# 6 --- Playback ---
 print("Playing original...")
 sd.play(signal_orig, samplerate)
 sd.wait()
@@ -43,7 +44,7 @@ print("Playing filtered...")
 sd.play(signal_filtered, samplerate)
 sd.wait()
 
-# --- Frequency domain plot ---
+# 7 --- Frequency domain plot ---
 print("Plotting figure...")
 N = len(signal_orig)
 xf = fftfreq(N, 1 / samplerate)
@@ -65,7 +66,7 @@ plt.ylabel('Magnitude (dB)')
 plt.legend()
 plt.tight_layout()
 
-# --- Notch filter plot ---
+# 8 --- Notch filter plot ---
 w, h = signal.freqz(b, a, fs=samplerate)
 plt.figure()
 plt.plot(w, 20 * np.log10(abs(h)))
